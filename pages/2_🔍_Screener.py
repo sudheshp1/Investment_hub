@@ -16,8 +16,9 @@ if 'last_selected_symbol' not in st.session_state:
 if 'last_selected_index' not in st.session_state:
     st.session_state.last_selected_index = ""
 if 'scan_active' not in st.session_state:
-    st.session_state.scan_active = False # New trigger for tabs
+    st.session_state.scan_active = False 
 
+# Must be the first streamlit command
 st.set_page_config(page_title="Stock Screener", page_icon="🔍", layout="wide")
 apply_custom_css()
 
@@ -26,32 +27,43 @@ st.markdown('<h1 class="main-title">🔍 Market Opportunities Screener</h1>', un
 ut.show_live_benchmarks()
 
 # --- SELECTION BAR ---
-col_idx, _ = st.columns([1, 2.5])
+# Adjusted ratios to prevent the index selector from stretching too wide on Cloud
+col_idx, _ = st.columns([1.5, 3.5])
 with col_idx:
-    st.markdown('<p style="font-weight: 600; font-size: 1.1rem; margin-bottom: -10px;">📂 1. Choose Target Index</p>', unsafe_allow_html=True)
-    index_choice = st.selectbox("Index", ["NIFTY 50", "NIFTY NEXT 50"], label_visibility="collapsed")
+    st.markdown('<p style="font-weight: 600; font-size: 1.1rem; margin-bottom: 5px;">📂 1. Choose Target Index</p>', unsafe_allow_html=True)
+    index_choice = st.selectbox(
+        "Index", 
+        ["NIFTY 50", "NIFTY NEXT 50"], 
+        label_visibility="collapsed",
+        key="main_index_choice"
+    )
 
 stock_mapping = ut.get_index_tickers(index_choice)
 
+# --- STOCK SELECTION FORM ---
 with st.form("stock_selection_form"):
-    col_stock, col_btn = st.columns([2, 1])
+    # KEY FIX: vertical_alignment="bottom" ensures the button and selectbox share the same baseline
+    col_stock, col_btn = st.columns([2, 1], vertical_alignment="bottom")
+    
     with col_stock:
-        st.markdown('<p style="font-weight: 600; font-size: 1.1rem; margin-bottom: -10px;">🎯 2. Select Company</p>', unsafe_allow_html=True)
+        st.markdown('<p style="font-weight: 600; font-size: 1.1rem; margin-bottom: 5px;">🎯 2. Select Company</p>', unsafe_allow_html=True)
         selected_symbol = st.selectbox(
             "Company",
             options=list(stock_mapping.keys()), 
             format_func=lambda sym: f"{stock_mapping[sym]}",
             label_visibility="collapsed"
         )
+    
     with col_btn:
-        st.markdown('<div style="height: 28px;"></div>', unsafe_allow_html=True)
+        # Removed the hacky <div> spacer and replaced with native vertical alignment
         confirm_btn = st.form_submit_button("✅ Confirm Selection", use_container_width=True)
 
+# --- ACTION LOGIC ---
 if confirm_btn:
     st.session_state.confirmed = True
     st.session_state.last_selected_symbol = selected_symbol
     st.session_state.last_selected_index = index_choice
-    st.session_state.scan_active = False # Reset scan when a new stock is confirmed
+    st.session_state.scan_active = False 
 
 st.markdown("<hr style='margin: 30px 0; border: 0; border-top: 1px solid rgba(255,255,255,0.1);'>", unsafe_allow_html=True)
 
@@ -616,4 +628,5 @@ if st.session_state.confirmed:
     else:
         st.info("Selection changed. Please click 'Confirm Selection' to refresh.")
 else:
+
     st.info("Please select an index and stock, then click 'Confirm Selection'.")
