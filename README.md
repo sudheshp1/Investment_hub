@@ -29,5 +29,5 @@ A comprehensive Indian stock and mutual fund tracking dashboard featuring real-t
 
 1. **Clone the repo:**
    ```bash
-   git clone [https://github.com/your-username/your-repo-name.git](https://github.com/your-username/your-repo-name.git)
-   cd your-repo-name
+   git clone [https://github.com/sudheshp1/Investment_hub.git](https://github.com/sudheshp1/Investment_hub.git)
+   cd Investment_hub
