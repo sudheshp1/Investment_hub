@@ -44,8 +44,8 @@ def show_live_benchmarks():
 
 def handle_kite_auth():
     """Renders the Kite Configuration UI. Call this ONLY on Dashboard."""
-    api_key = "e53bh9l0p0haf9wl"
-    api_secret = "4k4ft0rn9xb23dxeqt9nsb6gtonrsg3z"
+    api_key = st.secrets["api_key"]
+    api_secret = st.secrets["api_secret"]
     
     # Initialize session state for persistent login
     if "kite" not in st.session_state:
@@ -605,4 +605,5 @@ def format_indian_currency(number):
         import re
         other = re.sub(r"(\d)(?=(\d{2})+(?!\d))", r"\1,", other)
         return f"{other},{last_three}.{fraction}"
+
     return f"{last_three}.{fraction}"
